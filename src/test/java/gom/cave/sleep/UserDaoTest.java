@@ -12,7 +12,7 @@ public class UserDaoTest {
     @Test
     public void testUserGet() throws Exception {
         // Given
-        final UserDao userDao = new UserDao();
+        final UserDao userDao = new JejuUserDao();
         final long id = 1L;
         final String name = "kim";
         final String password= "gom";
@@ -35,8 +35,8 @@ public class UserDaoTest {
         final User user = new User();
         user.setName(name);
         user.setPassword(password);
+        final UserDao userDao = new JejuUserDao();
 
-        final UserDao userDao = new UserDao();
         // When
         Long resultId = userDao.add(user);
         final User resultUser = userDao.get(resultId);
@@ -45,4 +45,42 @@ public class UserDaoTest {
         assertThat(resultUser.getName(), is(name));
         assertThat(resultUser.getPassword(), is(password));
     }
+
+    @Test
+    public void testUserGetForKr() throws Exception {
+        // Given
+        final UserDao userDao = new KrUserDao();
+        final long id = 1L;
+        final String name = "kim";
+        final String password= "gom";
+
+        // When
+        User user =userDao.get(id);
+
+        // Then
+        assertThat(user.getId(), is(id));
+        assertThat(user.getName(), is(name));
+        assertThat(user.getPassword(), is(password));
+
+    }
+
+    @Test
+    public void testUserAddForKr() throws Exception {
+        // Given
+        final String name = "kr";
+        final String password = "1234";
+        final User user = new User();
+        user.setName(name);
+        user.setPassword(password);
+        final UserDao userDao = new KrUserDao();
+
+        // When
+        Long resultId = userDao.add(user);
+        final User resultUser = userDao.get(resultId);
+        // Then
+        assertThat(resultUser.getId(), is(resultId));
+        assertThat(resultUser.getName(), is(name));
+        assertThat(resultUser.getPassword(), is(password));
+    }
+
 }
