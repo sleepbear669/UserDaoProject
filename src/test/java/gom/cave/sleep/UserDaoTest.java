@@ -26,4 +26,23 @@ public class UserDaoTest {
         assertThat(user.getPassword(), is(password));
 
     }
+
+    @Test
+    public void testUserAdd() throws Exception {
+        // Given
+        final String name = "kr";
+        final String password = "1234";
+        final User user = new User();
+        user.setName(name);
+        user.setPassword(password);
+
+        final UserDao userDao = new UserDao();
+        // When
+        Long resultId = userDao.add(user);
+        final User resultUser = userDao.get(resultId);
+        // Then
+        assertThat(resultUser.getId(), is(resultId));
+        assertThat(resultUser.getName(), is(name));
+        assertThat(resultUser.getPassword(), is(password));
+    }
 }
