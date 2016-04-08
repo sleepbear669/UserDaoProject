@@ -15,42 +15,95 @@ public class UserDao {
 
     public User get(long id) throws ClassNotFoundException, SQLException {
 
-        final Connection connection = connectionMaker.getConnection();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        User user = null;
+        try {
+            connection = connectionMaker.getConnection();
 
-        final String sql = "select * from user where id = ?";
-        final PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        preparedStatement.setLong(1, id);
+            final String sql = "select * from user where id = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, id);
 
-        final ResultSet resultSet = preparedStatement.executeQuery();
-        resultSet.next();
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
 
-        final User user = new User();
-        user.setId(resultSet.getLong("id"));
-        user.setName(resultSet.getString("name"));
-        user.setPassword(resultSet.getString("password"));
+            user = new User();
+            user.setId(resultSet.getLong("id"));
+            user.setName(resultSet.getString("name"));
+            user.setPassword(resultSet.getString("password"));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
-        resultSet.close();
-        preparedStatement.close();
-        connection.close();
+
 
         return user;
     }
 
     public Long add(User user) throws ClassNotFoundException, SQLException {
 
-        final Connection connection = connectionMaker.getConnection();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        long id = 0;
+        try {
+            connection = connectionMaker.getConnection();
 
-        final String sql = "INSERT INTO user (name, password) VALUES (?, ? ) ";
-        final PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        preparedStatement.setString(1, user.getName());
-        preparedStatement.setString(2, user.getPassword());
+            final String sql = "INSERT INTO user (name, password) VALUES (?, ? ) ";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(2, user.getPassword());
 
-        preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
 
-        final long id = getLastId(connection);
+            id = getLastId(connection);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
-        preparedStatement.close();
-        connection.close();
+
 
         return id;
     }
