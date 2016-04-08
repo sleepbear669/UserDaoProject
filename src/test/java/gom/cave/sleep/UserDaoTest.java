@@ -77,6 +77,30 @@ public class UserDaoTest {
         final User deletedUser = userDao.get(resultId);
 
         assertThat(deletedUser, nullValue());
+    }
 
+    @Test
+    public void testUserUpdate() throws Exception {
+        // Given
+        String name = "kr";
+        String password = "1234";
+        final User user = new User();
+        user.setName(name);
+        user.setPassword(password);
+
+        // When
+        Long resultId = userDao.add(user);
+        final User resultUser = userDao.get(resultId);
+
+        name = "roo";
+        password = "0234";
+        resultUser.setName(name);
+        resultUser.setPassword(password);
+
+        userDao.update(resultUser);
+        final User updatedUser = userDao.get(resultId);
+
+        // Then
+        resultUserMatchCheck(resultId, name, password, updatedUser);
     }
 }
