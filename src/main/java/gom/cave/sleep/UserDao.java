@@ -1,15 +1,18 @@
 package gom.cave.sleep;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Created by sleepbear on 2016. 3. 25..
  */
 public class UserDao {
 
-    private final ConnectionMaker connectionMaker;
+    private ConnectionMaker connectionMaker;
 
-    public UserDao(ConnectionMaker connectionMaker) {
+    public void setConnectionMaker(ConnectionMaker connectionMaker) {
         this.connectionMaker = connectionMaker;
     }
 
@@ -22,9 +25,8 @@ public class UserDao {
         try {
             connection = connectionMaker.getConnection();
 
-            final String sql = "select * from user where id = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setLong(1, id);
+            StatementStrategy statementStrategy = new GetStatementStrategy(id);
+            preparedStatement = statementStrategy.makeStatement(connection);
 
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -74,10 +76,8 @@ public class UserDao {
         try {
             connection = connectionMaker.getConnection();
 
-            final String sql = "INSERT INTO user (name, password) VALUES (?, ? ) ";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, user.getName());
-            preparedStatement.setString(2, user.getPassword());
+            StatementStrategy statementStrategy = new AddStatementStrategy(user);
+            preparedStatement = statementStrategy.makeStatement(connection);
 
             preparedStatement.executeUpdate();
 
@@ -124,10 +124,8 @@ public class UserDao {
         PreparedStatement preparedStatement = null;
         try {
             connection = connectionMaker.getConnection();
-
-            final String sql = "DELETE FROM user WHERE id = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setLong(1, id);
+            StatementStrategy statementStrategy = new DeleteStatementStrategy(id);
+            preparedStatement = statementStrategy.makeStatement(connection);
 
             preparedStatement.executeUpdate();
 
@@ -160,11 +158,8 @@ public class UserDao {
         try {
             connection = connectionMaker.getConnection();
 
-            final String sql = "UPDATE user SET name = ? , password = ? where id = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, user.getName());
-            preparedStatement.setString(2, user.getPassword());
-            preparedStatement.setLong(3, user.getId());
+            StatementStrategy statementStrategy = new UpdateStatementStrategy(user);
+            preparedStatement = statementStrategy.makeStatement(connection);
 
             preparedStatement.executeUpdate();
 
@@ -190,4 +185,5 @@ public class UserDao {
         }
 
     }
+
 }
