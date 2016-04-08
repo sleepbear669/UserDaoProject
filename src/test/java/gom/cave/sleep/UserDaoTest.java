@@ -7,6 +7,7 @@ import org.springframework.context.support.GenericXmlApplicationContext;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 
 /**
  * Created by sleepbear on 2016. 3. 25..
@@ -60,5 +61,22 @@ public class UserDaoTest {
         resultUserMatchCheck(resultId, name, password, resultUser);
     }
 
+    @Test
+    public void testUserDelete() throws Exception {
+        // Given
+        final String name = "kr";
+        final String password = "1234";
+        final User user = new User();
+        user.setName(name);
+        user.setPassword(password);
 
+        // When
+        Long resultId = userDao.add(user);
+        final User resultUser = userDao.get(resultId);
+        userDao.delete(resultId);
+        final User deletedUser = userDao.get(resultId);
+
+        assertThat(deletedUser, nullValue());
+
+    }
 }
