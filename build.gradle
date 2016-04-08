@@ -10,7 +10,12 @@ repositories {
     mavenCentral()
 }
 
+ext{
+    springVersion = '4.2.5.RELEASE'
+}
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     runtime 'mysql:mysql-connector-java:5.1.38'
+    compile group: 'org.springframework', name: 'spring-context', version: springVersion
 }
