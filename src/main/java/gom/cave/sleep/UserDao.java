@@ -102,9 +102,6 @@ public class UserDao {
                 }
             }
         }
-
-
-
         return id;
     }
 
@@ -120,49 +117,24 @@ public class UserDao {
     }
 
     public void delete(Long id) {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        try {
-            connection = connectionMaker.getConnection();
-            StatementStrategy statementStrategy = new DeleteStatementStrategy(id);
-            preparedStatement = statementStrategy.makeStatement(connection);
-
-            preparedStatement.executeUpdate();
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        StatementStrategy statementStrategy = new DeleteStatementStrategy(id);
+        jdbcContextWithStatementStrategyForUpdate(statementStrategy);
 
     }
 
     public void update(User user) {
+        StatementStrategy statementStrategy = new UpdateStatementStrategy(user);
+        jdbcContextWithStatementStrategyForUpdate(statementStrategy);
+    }
+
+    public void jdbcContextWithStatementStrategyForUpdate(StatementStrategy statementStrategy) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
+
         try {
             connection = connectionMaker.getConnection();
-
-            StatementStrategy statementStrategy = new UpdateStatementStrategy(user);
             preparedStatement = statementStrategy.makeStatement(connection);
-
             preparedStatement.executeUpdate();
-
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
@@ -183,7 +155,6 @@ public class UserDao {
                 }
             }
         }
-
     }
 
 }
