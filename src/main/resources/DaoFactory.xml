@@ -7,8 +7,13 @@
     </bean>
 
     <bean id="jdbcContext" class="gom.cave.sleep.JdbcContext">
-        <property name="connectionMaker" ref="SimpleConnectionMaker"/>
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="SimpleConnectionMaker" class="gom.cave.sleep.SimpleConnectionMaker"/>
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost/UserDatabase"/>
+        <property name="username" value="root"/>
+        <property name="password" value="gom0119!1"/>
+    </bean>
 </beans>

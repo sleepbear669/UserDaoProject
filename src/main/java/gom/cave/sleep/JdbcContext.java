@@ -1,15 +1,16 @@
 package gom.cave.sleep;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class JdbcContext {
-    ConnectionMaker connectionMaker;
+    DataSource dataSource;
 
-    public void setConnectionMaker(ConnectionMaker connectionMaker) {
-        this.connectionMaker = connectionMaker;
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public User JdbcContextWithStatementStrategyForQuery(StatementStrategy statementStrategy) {
@@ -18,7 +19,7 @@ public class JdbcContext {
         ResultSet resultSet = null;
         User user = null;
         try {
-            connection = connectionMaker.getConnection();
+            connection = dataSource.getConnection();
 
             preparedStatement = statementStrategy.makeStatement(connection);
 
@@ -29,8 +30,6 @@ public class JdbcContext {
                 user.setName(resultSet.getString("name"));
                 user.setPassword(resultSet.getString("password"));
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -66,15 +65,13 @@ public class JdbcContext {
         PreparedStatement preparedStatement = null;
         long id = 0;
         try {
-            connection = connectionMaker.getConnection();
+            connection = dataSource.getConnection();
 
             preparedStatement = statementStrategy.makeStatement(connection);
 
             preparedStatement.executeUpdate();
 
             id = getLastId(connection);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -112,11 +109,9 @@ public class JdbcContext {
         PreparedStatement preparedStatement = null;
 
         try {
-            connection = connectionMaker.getConnection();
+            connection = dataSource.getConnection();
             preparedStatement = statementStrategy.makeStatement(connection);
             preparedStatement.executeUpdate();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
